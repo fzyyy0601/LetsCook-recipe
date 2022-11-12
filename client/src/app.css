@@ -1,0 +1,51 @@
+.header{
+    margin:40px;
+    text-align: center;
+}
+
+* {
+    background-color: #EBE9E9;
+    font-size: large;
+}
+
+
+.sub-header{
+    text-align: center;
+    font-style: oblique;
+}
+
+.btn-random{
+    font-style: italic;
+    font-size: 20px;
+    margin: 11%;
+    text-align: center;
+}
+.btn-random:hovwer{
+    background-color:antiquewhite;
+    
+}
+.mat{
+    text-align: center;
+    height: 22px;
+    color:aqua;
+    margin:10px;
+    font-size: 25px;
+}
+.mat:checked{
+    background-color:blue;
+}
+.btn-search{
+    font-size: 30px;
+    text-align: center;
+    font-style:italic;
+    margin: 15%;
+    border-radius: 60%;
+    text-decoration:underline;
+}
+.container{
+    display: flex;
+    align-items: center;
+    padding:5px;
+    flex-wrap: wrap;
+    justify-content:space-around;
+}
