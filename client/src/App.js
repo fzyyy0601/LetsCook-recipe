@@ -1,58 +1,29 @@
-import React,{Component} from 'react';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 import './app.css';
-
-// class APP extends Component{
-//   constructor(props){
-//     super(props)
-//     this.state = {apiResponse:""};
-//   }
-//   callAPI(){
-//     fetch("http://localhost:3100/testAPI").then(res =>res.text())
-//     .then(res=>this.setState({apiResponse:res}))
-//     .catch(err=>err)
-//   }
-//   componentDidMount(){
-//     this.callAPI();
-//   }
-//   handleCheck(){
-//     return  null;
-//   }
-//   render(){
-//     return(
-//       <div className='App'>
-//         <header className='App-header'>
-//         <h1>Welcome to Smart Recipe!</h1>
-//     <button className='btn ramdon-recipe'>Don't know how to choose? Randomly get a recipe!</button>
-//     <hr></hr>
-//     <label>
-//     <input type="checkbox" className="mat"/>tomato
-//     </label>
-//     <label>
-//     <input type="checkbox" className="mat"/>egg
-//     </label>
-//     <label>
-//     <input type="checkbox" className="mat"/>lettuce
-//     </label>
-//     <label>
-//     <input type="checkbox" className="mat"/>saussage
-//     </label> 
-//         </header>
-//         <p class='app-intro'>{this.state.apiResponse}</p>
-//       </div>
-//     )
-//   }
-// }
-
+import GetRandomRecipe from './Components/RandomRecipe';
+import Page from './Components/Page';
+import GetRecipe from './Components/getRecipe';
+import Vege from './Components/Vege'
 function App() {
-  function handleCheck({mat, toggleMat}){
-    toggleMat(mat.id)
-  }
-
-  function randomRecipe(){
-    return 'recipe';
-  }
-
-  return (
+  
+  return(
+    <>
+    <div className="header">Welcome!</div>
+    <div className='header'>🥙Let's start cooking!🥗</div>
+    
+    <br></br>
+    <GetRecipe />
+    </>
+  )
+  
+}
+export default App;
+//module.exports = APP;
+/*
+<Vege />
+<Page />
+return (
     <>
     <h1 class='header'>Welcome to Smart Recipe!</h1>
     <button class='btn-random-recipe' onClick={randomRecipe}>Don't know how to choose? Randomly get a recipe!</button>
@@ -103,6 +74,4 @@ function App() {
     </label>
     </>
   )
-}
-
-export default App;
+*/

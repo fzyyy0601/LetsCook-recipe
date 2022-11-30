@@ -5,45 +5,50 @@ const app = express();
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-//const { default: getData } = require('./got-test');
-const getData = require('./got-test')
-const got = require('got')
-const food_api_id="8ec3fe8a";
-const food_api_key='f9ed737d34092ca3e40cd93f1a799a1d'
 const {URL, URLSearchParams} = require('url');
 const { resourceUsage } = require('process');
+//const getData = require('./got-test')
+const got = require('got')
+
+var corsOptions = {
+    credentials:true,
+    origin:'http://localhost:3000',
+    optionsSuccessStatus:200
+  };
+app.use(cors(corsOptions));
+
+app.use(express.urlencoded({extended: true})); // 必须要加
+app.use(express.json()); // 必须要加
+
+const food_api_id="8ec3fe8a";
+const food_api_key='f9ed737d34092ca3e40cd93f1a799a1d'
+
 //const URLSearchParams = new url.URLSearchParams()
 
 app.use('/testAPI', testAPIRouter)
 app.use(bodyParser.json());
 app.use(cors());
 
-const db = mysql.createConnection({
-    host : 'localhost',
-    user : 'zf2182',
-    password : '123456',
-    database : 'cruddatabase'
-});
+// const db = mysql.createConnection({
+//     host : 'localhost',
+//     user : 'zf2182',
+//     password : '123456',
+//     database : 'cruddatabase'
+// });
 
-db.connect();
+//db.connect();
 
 //app.get('/getRecipe',getData())
 
 app.get('/getRecipe',async function (req, res){
-    // const url = "https://api.edamam.com/search?"
-    // const params = new URLSearchParams({
-    //     q:'tomato,egg,spinach ',
-    //     app_id: food_api_id,
-    //     app_key:food_api_key,
-        
-    // })
     const url = new URL("https://api.edamam.com/search?");
     const params = querystring.stringify({
             
-        q:'tomato,egg,spinach ',
+        q:'tomato,egg,spinach',
         app_id: food_api_id,
         app_key:food_api_key,
-        
+        cuisineType:"chinese",
+        //time:10
     })
 
     const final_url = url + params;
@@ -57,7 +62,8 @@ app.get('/getRecipe',async function (req, res){
         console.log(final_url);
         v = await got.get(final_url).json();
         console.log('receiving data...');
-        res.send(v.hits);
+        res.send(v);
+        console.log('recipe displaying');
     }catch(error){
         console.log(error);
    }
@@ -67,19 +73,26 @@ app.get('/getRecipe',async function (req, res){
 app.get('/',(req, res) =>{
     res.send('Welcome!!')
 })
-
-app.get('/data', function(req,res){
-var sql = 'SELECT * FROM ninja limit 20';
-db.query(sql, (err, result)=>{
-    if(err) throw err;
-    console.log(result);
-    res.send(result);
-});
-});
-
-app.get('/data/random', function(req, res){
-    
+app.post('/test',(req, res) =>{
+    res.send('test test')
 })
+// app.get('/data', function(req,res){
+// var sql = 'SELECT * FROM ninja limit 20';
+// db.query(sql, (err, result)=>{
+//     if(err) throw err;
+//     console.log(result);
+//     res.send(result);
+// });
+// });
+
+// app.get('/data/random', function(req, res){
+//     res.send('今天天气真好！')
+// })
+
+// app.post('/hello',function(req, res){
+//     let p = req.body.name
+//     res.send(`${p}很有精神`)
+// })
 
 app.post('/data', function(req, res){
 	console.log(req.body); 
@@ -97,8 +110,8 @@ app.post('/data', function(req, res){
 });
 });
 
-app.listen(3100, ()=>{
-    console.log('Your server is workint in port 3100.')
+app.listen(5000, ()=>{
+    console.log('Your server is workint in port 5000.')
 });
 
 module.exports=app;
