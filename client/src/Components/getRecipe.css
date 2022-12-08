@@ -1,0 +1,20 @@
+.header{
+    margin:30px;
+    text-align: center;
+    font-size: 30px;
+    font-weight: 600;
+}
+
+* {
+    background-color: #fffcf9;
+    
+    font-size: large;
+}
+#random>div>a>img{
+    margin:10px;
+    width:50%;
+    border:10px solid #fff;
+}
+#random>div>a>img:hover{
+    transform: scale(1.1);
+}
