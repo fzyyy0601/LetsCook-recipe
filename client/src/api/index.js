@@ -5,10 +5,11 @@ const api = axios.create({
 })
 export const randomRecipe =()=>api.get(`/random`)
 export const getRecipe=payload=>api.post(`/getRecipe`,payload)
-
+export const getLongestTimeRecipe=()=>api.get(`/getLongestTimeRecipe`)
 const apis ={
     randomRecipe,
     getRecipe,
+    getLongestTimeRecipe
 }
 
 export default apis

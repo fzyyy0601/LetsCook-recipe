@@ -18,7 +18,9 @@ class GetRecipe extends Component{
             cuisineType:"",
             totalTime:"",
             image:"",
-            instructions:""
+            instructions:"",
+            minTime:"",
+            maxTime:""
         }
     }
     
@@ -34,17 +36,41 @@ class GetRecipe extends Component{
             q.push(v)
         }
         console.log(q);
-        var query = {
-            'material': q,
-            'tag':this.state.cuisine,
-            'minTime':20,
-            'maxTime':35
+        var query;
+        if(this.state.minTime > this.state.maxTime && this.state.minTime !== "" && this.state.maxTime !== ""){
+            alert("Minimum time should be smaller than maximum time, please choose your time span again")
+            this.setState({minTime:"", maxTime:""})
         }
-        
+        console.log(this.state.minTime)
+        console.log(this.state.maxTime)
+        if(this.state.minTime !== "" && this.state.maxTime !== ""){
+            query = {
+                'material': q,
+                'tag':this.state.cuisine,
+                'minTime':this.state.minTime,
+                'maxTime':this.state.maxTime
+            }
+        }else if(this.state.minTime !== ""){
+            query = {
+                'material': q,
+                'tag':this.state.cuisine,
+                'minTime':this.state.minTime
+            }
+        }else if(this.state.maxTime !== ""){
+            query = {
+                'material': q,
+                'tag':this.state.cuisine,
+                'maxTime':this.state.maxTime
+            }
+        }else {
+            query = {
+                'material': q,
+                'tag':this.state.cuisine
+            }
+        }
+        console.log(query)
         api.getRecipe(query)
         .then(response=>{
-            // console.log(response);
-            // console.log(response.data.data[0])
             if(response.data.data.length === 0){
                 this.setState({
                     vegetables:new Set(),
@@ -63,10 +89,6 @@ class GetRecipe extends Component{
     getRandom = async()=>{
         await api.randomRecipe()
         .then(response=>{
-            console.log(response);
-            console.log(response.data.data)
-            console.log(response.data.data[0])
-            console.log(response.data.data[0].ingredients)
             this.setState({
                 _id:response.data.data[0]._id,
                 url:response.data.data[0].url,
@@ -80,51 +102,61 @@ class GetRecipe extends Component{
         })
         .then(error=>console.log(error)) 
     }
+    showIngredients(){
+        var str = "";
+        for(var i = 0; i < this.state.ingredients.length; i++){
+            str += this.state.ingredients[i] +"\n"
+        }
+        return str;
+    }
+
     showRandom(){
         let res;
         if((this.state.totalTime) !== "" && (this.state.cuisineType) !== ""){
         res = 
             <div> 
                 <a href={this.state.url}>
-                    <img src={this.state.image}/>
+                    <img src={this.state.image} title={this.showIngredients()}/>
                 </a>
                 <p>{(String)(this.state.label)}</p>
                 <span>Total Time : {(String)(this.state.totalTime)} Mins</span>
                 <br></br>
                 <span>Cuisine Type: {(String)(this.state.cuisineType)}</span>
-                <p>{(String)(this.state.instructions)}</p>
             </div>
         }
         else if((this.state.cuisineType) !== ""){
             res = 
             <div> 
                 <a href={this.state.url}>
-                    <img src={this.state.image}/>
+                    <img src={this.state.image} title={this.showIngredients()}/>
                 </a>
                 <p>{(String)(this.state.label)}</p>
                 <br></br>
                 <span>Cuisine Type: {(String)(this.state.cuisineType)}</span>
-                <p>{(String)(this.state.instructions)}</p>
             </div>
         }
         else if((this.state.totalTime !== "")){
             res = 
             <div> 
                 <a href={this.state.url}>
-                    <img src={this.state.image}/>
+                    <img src={this.state.image} title={this.showIngredients()}/>
                 </a>
                 <p>{(String)(this.state.label)}</p>
                 <span>Total Time : {(String)(this.state.totalTime)} Mins</span>
                 <br></br>
-                <p>{(String)(this.state.instructions)}</p>
             </div>
         }
         else {
             res = ""
         }
-        console.log(this.state.totalTime)
-        console.log(this.state.cuisineType)
         return res;
+    }
+    showIngredients_1(ingredients){
+        var str ="";
+        for(var i = 0; i < ingredients.length; i++){
+            str += ingredients[i] + "\n";
+        }
+        return str;
     }
     showRecipe(){
         return(
@@ -135,7 +167,7 @@ class GetRecipe extends Component{
                         <li>
                             <div key={value._id} className='content'>
                                 <a href={value.url}>
-                                    <img src={value.image}/>
+                                    <img src={value.image} title={this.showIngredients_1(value.ingredients)}/>
                                 </a>
                                 <p>{(String)(value.title)}</p>
                                 <span>Total Time : {(String)(value.totaltime)}</span>
@@ -149,22 +181,41 @@ class GetRecipe extends Component{
                 </div>
         )
     }
-
+    getLongestTimeRecipe = async()=>{
+            await api.getLongestTimeRecipe()
+            .then(response=>{
+                this.setState({
+                    _id:response.data.data[0]._id,
+                    url:response.data.data[0].url,
+                    label:response.data.data[0].title,
+                    totalTime:response.data.data[0].totaltime,
+                    cuisineType:response.data.data[0].tag,
+                    ingredients:response.data.data[0].ingredients,
+                    image:response.data.data[0].image,
+                    instructions: response.data.data[0].instructions
+                 })
+            })
+            .then(error=>console.log(error)) 
+    }
     updateMeat(props){
         this.state.meat.add(props);
-        console.log(this.state.meat)
     }
     updateStaple(props){
         this.state.staple_food.add(props);
-        console.log(this.state.staple_food)
     }
     updateVege(props){
         this.state.vegetables.add(props);
-        console.log(this.state.vegetables)
     }
     updateCuisine(props){
-        this.state.cuisine = props;
-        console.log(this.state.cuisine)
+        this.setState({cuisine:props})
+    }
+    updateMinTime(props){
+        this.setState({minTime:props})
+        console.log(this.state.minTime)
+    }
+    updateMaxTime(props){
+        this.setState({maxTime:props})
+        console.log(this.state.maxTime)
     }
     render(){
         
@@ -174,12 +225,20 @@ class GetRecipe extends Component{
                 <div className='header'>🥙Let's start cooking!🥗</div>
                 <div className='btn-container-1'> 
                 <button className="btn get_random" onClick={this.getRandom}>Don't know what to eat? Let's get one random recipe!</button>
+                {/* <button className="btn get_random" onClick={this.getLongestTimeRecipe}>Try the recipe that would cost you a whole week!</button>
+                 */}
                 </div>
                 <div className='btn-container'>     
                     <h3 className="material_title">Choose your cuisine type</h3>
                     <button className="btn choose" onClick={()=>this.updateCuisine("chinese")}>Chinese</button>
                     <button className="btn choose" onClick={()=>this.updateCuisine("indian")}>Indian</button>
                     <button className="btn choose" onClick={()=>this.updateCuisine("american")}>American</button>
+                    <button className="btn choose" onClick={()=>this.updateCuisine("thai")}>Thai</button>
+                    <button className="btn choose" onClick={()=>this.updateCuisine("english")}>English</button>
+                    <button className="btn choose" onClick={()=>this.updateCuisine("vietnamese")}>Vietnamese</button>
+                    <button className="btn choose" onClick={()=>this.updateCuisine("french")}>French</button>
+                    <button className="btn choose" onClick={()=>this.updateCuisine("japanese")}>Japanese</button>
+                    <button className="btn choose" onClick={()=>this.updateCuisine("mexican")}>Mexican</button>
                 </div>
                 <div className='btn-container'>  
                     <h3 className="material_title">Choose your vegetables</h3>
@@ -187,19 +246,44 @@ class GetRecipe extends Component{
                     <button className="btn choose" onClick={()=>this.updateVege("potato")}>Potato</button>
                     <button className="btn choose" onClick={()=>this.updateVege("lettuce")}>Lettuce</button>
                     <button className="btn choose" onClick={()=>this.updateVege("spinach")}>Spinach</button>
+                    <button className="btn choose" onClick={()=>this.updateVege("celery")}>Celery</button>
+                    <button className="btn choose" onClick={()=>this.updateVege("soy")}>Soy</button>
+                    <button className="btn choose" onClick={()=>this.updateVege("cucumber")}>Cucumber</button>
+                    <button className="btn choose" onClick={()=>this.updateVege("cabbage")}>Cabbage</button>
                 </div>
                 <div className='btn-container'>  
                     <h3 className="material_title">Choose your meat</h3>
+                    <button className="btn choose" onClick={()=>this.updateMeat("beaf")}>Beaf</button>
                     <button className="btn choose" onClick={()=>this.updateMeat("pork")}>Pork</button>
                     <button className="btn choose" onClick={()=>this.updateMeat("ham")}>Ham</button>
                     <button className="btn choose" onClick={()=>this.updateMeat("chicken")}>Chicken</button>
                     <button className="btn choose" onClick={()=>this.updateMeat("egg")}>Egg</button>
+                    <button className="btn choose" onClick={()=>this.updateMeat("fish")}>Fish</button>
                 </div>
                 <div className='btn-container'>  
                     <h3 className="material_title">Choose your staple food</h3>
                     <button className="btn choose" onClick={()=>this.updateStaple("rice")}>Rice</button>
                     <button className="btn choose" onClick={()=>this.updateStaple("noodle")}>Noodle</button>
                     <button className="btn choose" onClick={()=>this.updateStaple("pasta")}>Pasta</button>
+                    <button className="btn choose" onClick={()=>this.updateStaple("flour")}>Flour</button>
+                </div>
+                <div className='btn-container'>  
+                    <h3 className="material_title">The minimum time you are willing to spend on cooking</h3>
+                    <button className="btn choose" onClick={()=>this.updateMinTime("10")}>10 Mins</button>
+                    <button className="btn choose" onClick={()=>this.updateMinTime("20")}>20 Mins</button>
+                    <button className="btn choose" onClick={()=>this.updateMinTime("30")}>30 Mins</button>
+                    <button className="btn choose" onClick={()=>this.updateMinTime("40")}>40 Mins</button>
+                    <button className="btn choose" onClick={()=>this.updateMinTime("50")}>50 Mins</button>
+                    <button className="btn choose" onClick={()=>this.updateMinTime("60")}>60 Mins</button>
+                </div>
+                <div className='btn-container'>  
+                    <h3 className="material_title">And the maximum time you are willing to spend on cooking</h3>
+                    <button className="btn choose" onClick={()=>this.updateMaxTime("10")}>10 Mins</button>
+                    <button className="btn choose" onClick={()=>this.updateMaxTime("20")}>20 Mins</button>
+                    <button className="btn choose" onClick={()=>this.updateMaxTime("30")}>30 Mins</button>
+                    <button className="btn choose" onClick={()=>this.updateMaxTime("40")}>40 Mins</button>
+                    <button className="btn choose" onClick={()=>this.updateMaxTime("50")}>50 Mins</button>
+                    <button className="btn choose" onClick={()=>this.updateMaxTime("60")}>60 Mins</button>
                 </div>
                 <h2 className='get_title'>Get Recipe</h2>  
                 <div className='btn-container-1'>
@@ -213,6 +297,7 @@ class GetRecipe extends Component{
                 <div id="main">
                     {this.showRecipe()}
                 </div>
+                
             </div>
 
         )
@@ -221,33 +306,3 @@ class GetRecipe extends Component{
 }
 
 export default GetRecipe;
-//import { SafeAreaView, View, FlatList, StyleSheet, Text, StatusBar } from 'react-native';
-// var data = JSON.parse(JSON.stringify([
-//     {
-//       "companyName": "Demo1 Technologies",
-//       "logo": "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg",
-//       "url": "https://www.google.com/",
-//       "roles": [
-//         {
-//           "title": "Full Stack Developer",
-//           "description": "Built and updated various Chrome Extensions.",
-//           "startDate": "2017-01-01",
-//           "endDate": "2017-05-01",
-//           "location": "New York, USA"
-//         }
-//       ]
-//     }]));
-//<FlatList
-// data={data}
-// renderItem={({ item }) => {
-//   return (
-//     <View>
-//       <Text>{item.roles[0].title}</Text>
-//     </View>
-//   );
-// }}
-// />
-// <p>{(String)(this.state.list.recipe.image)}</p>
-{/* <ul>{this.state.random.map((value, key)=>{
-            return <li key={key}>{(String)(value.recipe.image)}</li>
-         })}</ul> */}

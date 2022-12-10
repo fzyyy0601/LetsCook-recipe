@@ -1,48 +1,4 @@
 const Recipe = require('../models/recipe-model')
-
-getRecipeById = async(req, res)=>{
-    await Recipe.findOne({_id:req.params.id},(err,recipe)=>{
-        if(err) return res.status(400).json({success: false, error:err})
-        if(!recipe) return res.status.json({success:false, error:'Recipe Not Found'})
-        return res.status(200).json({success:true, data:recipe})
-    }).catch(err=>console.log(err))
-}
-
-getRecipeRegex = async(req, res)=>{
-    await Recipe.aggregate([
-        {
-          '$match': {
-            '$and': [
-              {
-                'totaltime': {
-                  '$gt': 15, 
-                  '$lt': 30
-                }
-              }, {
-                'ingredients': {
-                  '$regex': new RegExp('oil'), 
-                  '$regex': new RegExp('celery')
-                }
-              }
-            ]
-          }
-        }, {
-          '$limit': 5
-        }, {
-            '$sort': {
-              'totaltime': 1
-            }
-          }
-      ],(err,recipe)=>{
-        if(err) return res.status(400).json({success:false, error: err})
-        if(!recipe.length){
-            return res
-                    .status(400)
-                    .json({success: false, error:'Recipe Not Found'})
-        }
-        return res.status(200).json({success:true, data:recipe})
-      }).catch(error=>console.log(err))
-}
 getRecipe = async(req, res)=>{
   console.log(req.body)
   var query_q = []
@@ -57,23 +13,18 @@ getRecipe = async(req, res)=>{
 
   if(typeof req.body.minTime !== 'undefined' & typeof req.body.maxTime !== 'undefined'){
     query_time = {
-      '$gt': req.body.minTime, 
-      '$lt': req.body.maxTime
+      '$gt': parseInt(req.body.minTime), 
+      '$lt': parseInt(req.body.maxTime)
     }
   }else if(typeof req.body.maxTime !== 'undefined'){
     query_time = {
-      '$gt': 15,
-      '$lt': req.body.maxTime
+      '$lt': parseInt(req.body.maxTime)
     }
   }else if(typeof req.body.minTime !== 'undefined'){
     query_time ={
-      '$gt': req.body.minTime,
-      '$lt': 60
+      '$gt': parseInt(req.body.minTime)
     }
   }
-  // console.log(query_time)
-  // console.log(req.body.minTime)
-  // console.log(req.body.maxTime)
   await Recipe.aggregate([
       {
         '$match': {
@@ -91,7 +42,7 @@ getRecipe = async(req, res)=>{
           ]
         }
       }, {
-        '$limit': 5
+        '$limit': 10
       }, {
           '$sort': {
             'totaltime': 1
@@ -104,9 +55,22 @@ getRecipe = async(req, res)=>{
                   .status(400)
                   .json({success: false, error:'Recipe Not Found'})
       }
-      console.log(recipe[0])
+      console.log(recipe)
       return res.status(200).json({success:true, data:recipe})
     }).catch(error=>console.log(error))
+}
+
+getLongestTimeRecipe = async(req, res)=>{
+  //await Recipe.find().sort({totaltime:1}).limit(1) get the recipe with minimum time
+  await Recipe.aggregate([{$sort: {totaltime: -1}}, {$limit:1}],(err,recipe)=>{
+    if(err) return res.status(400).json({success:false, error: err})
+    if(!recipe.length){
+        return res
+                .status(400)
+                .json({success: false, error:'Recipe Not Found'})
+    }
+    return res.status(200).json({success:true, data:recipe})
+  }).catch(err=>console.log(err))
 }
 
 getRandom= async(req, res)=>{
@@ -137,6 +101,6 @@ getRandom= async(req, res)=>{
 
 module.exports={
     getRandom,
-    getRecipeById,
+    getLongestTimeRecipe,
     getRecipe
 }
