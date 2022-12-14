@@ -30,9 +30,9 @@ We get the title, image, instructions, ingredients, label, source and recipe url
 
 Project is created with:
 
-- React   - 18.2.0
+- React - 18.2.0
 - Node.js - 16.18.0
-- npm     - 8.19.2
+- npm - 8.19.2
 
 ## Features
 
@@ -56,7 +56,7 @@ Click **ABOUT** on the top middle of the page, users can see the about page.
 
 ### Github Repository
 
-Click on the second icon on the top of the page, users can go to the github repository of the website. 
+Click on the second icon on the top of the page, users can go to the github repository of the website.
 
 ## Setup
 
@@ -90,7 +90,7 @@ And when you put your mouse on the picture, you can see the ingredients that is 
 
 ### Get Recipe From Your Choice
 
-Scroll down the page, there are sets of squares in different type, representing the type of cuisine, vegetables, meat, staple food(the food the has most of 碳水化合物, which is usually indispensiable part in asian cuisine), and the minimum and maximum willing time to cook. Users can choose whatever they want to use, and if nothing is choosen and the user click Get Recipe, ....
+Scroll down the page, there are sets of squares in different type, representing the type of cuisine, vegetables, meat, staple food(the food the has most of carbohydrate, which is usually an indispensible part in asian cuisine), and the minimum and maximum willing time to cook. Users can choose whatever they want to use.
 
 <!-- 也许放个gif图会更好-->
 
@@ -101,7 +101,6 @@ Click on the button to choose what you want to cook with, how long you are willi
 If the maximum time the user choose is smaller than the minmum time the user choose, the error will come out, and the user need to choose other time span.
 
 ![Time Span](./img/time-span.gif)
-
 
 ## Project Status
 
