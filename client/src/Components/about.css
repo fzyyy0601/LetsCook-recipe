@@ -1,0 +1,21 @@
+.about-section{
+    text-align: center;
+    margin: 50px;
+}
+.about-header{
+    text-decoration: solid;
+    font-size: 36px;
+}
+
+.about-title{
+    font-size: 30px;
+    text-shadow: 1cm;
+}
+p{
+    margin: 10px;
+    font-size: 28px;
+}
+
+.about-text{
+    font-size: 20px;
+}
