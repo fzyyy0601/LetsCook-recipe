@@ -124,7 +124,7 @@ Currently the design is that, once the button is clicked, the color will change 
 
 ## Acknowledgements
 
-This project is a class project, and thanks my teammate[@zsr601](https://github.com/zsr601/) and my profeser and TA.
+This project is a class project, and thanks my teammate[@zsr601](https://github.com/zsr601/) and my professor and TA.
 
 The idea of using buttons to search was inspired by [this website](https://cook.yunyoujun.cn/).
 
