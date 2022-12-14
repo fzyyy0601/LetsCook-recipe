@@ -13,6 +13,7 @@
 - [Usage](#usage)
 - [Project Status](#project-status)
 - [Room for improvement](#room-for-improvement)
+- [Acknowledgements](#acknowledgements)
 
 ## General info
 
