@@ -11,7 +11,7 @@
 - [Screenshots](#screenshots)
 - [Setup](#setup)
 - [Usage](#usage)
-- [The Project Status](#the-project-status)
+- [Project Status](#project-status)
 - [Room for improvement](#room-for-improvement)
 
 ## General info
