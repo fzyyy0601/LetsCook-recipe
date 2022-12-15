@@ -7,9 +7,9 @@ export const Navbar =()=>{
     return(
         <div className = "navbar">
             <div className ="links">
-                <Link to="/"><HouseLine size={32} /></Link>
-                <Link to="/about">ABOUT</Link>
-                <a href="https://github.com/fzyyy0601/smart-recipe"><GithubLogo size={32} /></a>
+                <Link to="/" title="HOME"><HouseLine size={32} /></Link>
+                <Link to="/about" title='ABOUT'>ABOUT</Link>
+                <a href="https://github.com/fzyyy0601/smart-recipe" title='Go to Github Repository'><GithubLogo size={32} /></a>
             </div>
         </div>
     )

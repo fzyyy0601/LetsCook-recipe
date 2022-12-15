@@ -50,6 +50,7 @@
     text-align: center;
 }
 .btn-container-1{
+    margin:10px;
     display: flexbox;
     width:500px;
     flex-wrap: wrap;
@@ -62,7 +63,7 @@
     zoom: 1; /* zoom and *display = ie7 hack for display:inline-block */
     *display: inline;
     vertical-align: baseline;
-    margin: 0 2px;
+    margin: 2px 4px;
     outline: none;
     cursor: pointer;
     text-align: center;

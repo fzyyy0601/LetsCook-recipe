@@ -47,7 +47,6 @@ Here are the ready features:
 
 Click on the icon of small house on the top of the page, users can go back to home page.
 ![Example screeshot](./img/main-screenshoot-1.png)
-![Example screenshot](./img/main-screenshot-2.png)
 
 ### About page
 
@@ -96,7 +95,13 @@ Scroll down the page, there are sets of squares in different type, representing 
 
 Click on the button to choose what you want to cook with, how long you are willing to cook, and after click the button turned orange, indicating that you click successfully. Then click on Get Recipe button, you get several results.
 
+Either choose exact search, which return results that have all the food material you choose, or choose approximate search, return recipes that contains come of the food material.
+
+#### Exact Search
 ![Get your recipe](./img/choose.gif)
+
+#### Approximate Search
+![Get your recipe](./img/choose-1.gif)
 
 If the maximum time the user choose is smaller than the minmum time the user choose, the error will come out, and the user need to choose other time span.
 
@@ -109,10 +114,6 @@ Currently project is partly complete. We may have update of the feature in the n
 ## Room for Improvement
 
 Room for improvement:
-
-- Exact Search
-
-Currently we are using approximate search, using regex expression in MongoDB. When users give out a set of requirements, the search in MongoDB recipe data will give results that meet some of the requirements users give. And making specific recipe searching which meets all the requirement may be add to future search feature.
 
 - Add kitchen appliance or way of cook into searching option
 

@@ -2,7 +2,6 @@ import React, { Component ,useState} from 'react';
 import api from '../api'
 
 class GetRecipe extends Component{
-
     constructor(props){
         super(props)
         this.state={
@@ -24,8 +23,8 @@ class GetRecipe extends Component{
         }
     }
     
-    getData=()=>{
-        var q =[]
+    constructQuery_1=()=>{
+        var q = []
         for(var v of this.state.vegetables){
             q.push(v)
         }
@@ -35,14 +34,17 @@ class GetRecipe extends Component{
         for(var v of this.state.staple_food){
             q.push(v)
         }
-        console.log(q);
+        return q;
+    }
+
+    getData=async()=>{
+        var q = this.constructQuery_1()
+        if(q.length === 0) alert("Please choose food material")
         var query;
         if(this.state.minTime > this.state.maxTime && this.state.minTime !== "" && this.state.maxTime !== ""){
             alert("Minimum time should be smaller than maximum time, please choose your time span again")
             this.setState({minTime:"", maxTime:""})
         }
-        console.log(this.state.minTime)
-        console.log(this.state.maxTime)
         if(this.state.minTime !== "" && this.state.maxTime !== ""){
             query = {
                 'material': q,
@@ -69,23 +71,91 @@ class GetRecipe extends Component{
             }
         }
         console.log(query)
-        api.getRecipe(query)
-        .then(response=>{
-            if(response.data.data.length === 0){
+        await api.getRecipe(query)
+            .then(response=>{
+                console.log(response)
+                if(response.data.data.length === 0){
+                    this.setState({
+                        vegetables:new Set(),
+                        meat:new Set(),
+                        staple_food:new Set()
+                    })
+                    alert("Please choose again");
+                }else if(response.data.error) alert(response.data.error);
                 this.setState({
-                    vegetables:new Set(),
-                    meat:new Set(),
-                    staple_food:new Set()
+                    list:response.data.data
                 })
-                alert("Please choose again");
-            }
-            this.setState({
-                list:response.data.data
-             })
-        })
-        .then(error=>console.log(error))
+            })
+            .then(error=>console.log(error))
     }
     
+    getStrictData = async()=>{
+        var q = this.constructQuery_1()
+        if(q.length === 0) alert("Please choose food material")
+        var query;
+        if(this.state.minTime > this.state.maxTime && this.state.minTime !== "" && this.state.maxTime !== ""){
+            alert("Minimum time should be smaller than maximum time, please choose your time span again")
+            this.setState({minTime:"", maxTime:""})
+        }
+        if(this.state.minTime !== "" && this.state.maxTime !== ""){
+            query = {
+                'material': q,
+                'tag':this.state.cuisine,
+                'minTime':this.state.minTime,
+                'maxTime':this.state.maxTime
+            }
+        }else if(this.state.minTime !== ""){
+            query = {
+                'material': q,
+                'tag':this.state.cuisine,
+                'minTime':this.state.minTime
+            }
+        }else if(this.state.maxTime !== ""){
+            query = {
+                'material': q,
+                'tag':this.state.cuisine,
+                'maxTime':this.state.maxTime
+            }
+        }else {
+            query = {
+                'material': q,
+                'tag':this.state.cuisine
+            }
+        }
+        console.log(query)
+        try{
+            await api.getStrictRecipe(query)
+            .then(response=>{
+                console.log(response)
+                console.log(response.data)
+                console.log(response.data.data[0])
+                if(response.data.data.length === 0){
+                    this.setState({
+                        vegetables:new Set(),
+                        meat:new Set(),
+                        staple_food:new Set()
+                    })
+                    alert("Please choose again");
+                }else if(response.data.error) alert(response.data.error)
+                else{
+                    this.setState({
+                      list:response.data.data
+                     })
+                     for(var c of this.state.list) console.log(c)
+                }
+            })
+            .then(error=>{
+                if(error === 'undefined') alert('Recipe found.')
+                else if(error === 'AxiosError: Request failed with status code 400') alert('Recipe not found, please choose again')
+            })
+        }catch(e){
+           console.error(e)
+        }finally{
+            console.log('Done')
+        }
+        
+    }
+
     getRandom = async()=>{
         await api.randomRecipe()
         .then(response=>{
@@ -268,6 +338,15 @@ class GetRecipe extends Component{
                     <button className="btn choose" onClick={()=>this.updateStaple("flour")}>Flour</button>
                 </div>
                 <div className='btn-container'>  
+                    <h3 className="material_title">Choose the seasoning you want to use</h3>
+                    <button className="btn choose" onClick={()=>this.updateVege("vinegar")}>Vinegar</button>
+                    <button className="btn choose" onClick={()=>this.updateVege("curry")}>Curry</button>
+                    <button className="btn choose" onClick={()=>this.updateVege("salt")}>Salt</button>
+                    <button className="btn choose" onClick={()=>this.updateVege("pepper")}>Pepper</button>
+                    <button className="btn choose" onClick={()=>this.updateVege("olive oil")}>Olive Oil</button>
+                    <button className="btn choose" onClick={()=>this.updateVege("sugar")}>Sugar</button>
+                </div>
+                <div className='btn-container'>  
                     <h3 className="material_title">The minimum time you are willing to spend on cooking</h3>
                     <button className="btn choose" onClick={()=>this.updateMinTime("10")}>10 Mins</button>
                     <button className="btn choose" onClick={()=>this.updateMinTime("20")}>20 Mins</button>
@@ -287,7 +366,8 @@ class GetRecipe extends Component{
                 </div>
                 <h2 className='get_title'>Get Recipe</h2>  
                 <div className='btn-container-1'>
-                <button className="btn get_recipe" onClick={this.getData}>Get Recipe!</button>
+                <button className="btn get_recipe" onClick={this.getStrictData}>Get Recipe That contains all the food material</button>
+                <button className="btn get_recipe" onClick={this.getData}>Get Recipe That contains some of the food material</button>
                 </div>
                 
                 <div id="random">
