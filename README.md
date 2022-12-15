@@ -11,7 +11,7 @@
 - [Screenshots](#screenshots)
 - [Setup](#setup)
 - [Usage](#usage)
-- [Project Status](#project-status)
+- [The Project Status](#the-project-status)
 - [Room for improvement](#room-for-improvement)
 - [Acknowledgements](#acknowledgements)
 
@@ -99,9 +99,11 @@ Click on the button to choose what you want to cook with, how long you are willi
 Either choose exact search, which return results that have all the food material you choose, or choose approximate search, return recipes that contains come of the food material.
 
 #### Exact Search
+
 ![Get your recipe](./img/choose.gif)
 
 #### Approximate Search
+
 ![Get your recipe](./img/choose-1.gif)
 
 If the maximum time the user choose is smaller than the minmum time the user choose, the error will come out, and the user need to choose other time span.
