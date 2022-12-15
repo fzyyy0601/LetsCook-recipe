@@ -1,11 +1,8 @@
 const Recipe = require('../models/recipe-model')
 getRecipe = async(req, res)=>{
-  console.log(req.body)
-  var query_q = []
-  console.log(req.body.material)
-  for(var v of req.body.material){
-      query_q.push(eval(('/' + v +'/i') ))
-  }
+  //console.log(req.body)
+  var regex = req.body.material.map(function(k){return new RegExp(k); })
+  //console.log(regex)
   var query_time
   var query_tag
   if(typeof req.body.tag !== 'undefined') query_tag = req.body.tag
@@ -24,21 +21,23 @@ getRecipe = async(req, res)=>{
     query_time ={
       '$gt': parseInt(req.body.minTime)
     }
+  }else{
+    query_time="";
   }
+  console.log(query_time)
+  console.log(regex)
   await Recipe.aggregate([
       {
         '$match': {
           '$and': [
             {
               'totaltime': query_time
-            }, {
-              'ingredients': {
-                $in:query_q
-              }
-            },
+             }, {
+               'ingredients':{'$in':regex}
+             },
             {
               'tag':query_tag
-            }
+            }           
           ]
         }
       }, {
@@ -55,7 +54,6 @@ getRecipe = async(req, res)=>{
                   .status(400)
                   .json({success: false, error:'Recipe Not Found'})
       }
-      console.log(recipe)
       return res.status(200).json({success:true, data:recipe})
     }).catch(error=>console.log(error))
 }
@@ -85,22 +83,74 @@ getRandom= async(req, res)=>{
   }).catch(err=>console.log(err))
 }
 
-//get all recipes in the database
-// getRecipes = async(req, res)=>{
-//     await Recipe.find({},(err, recipe)=>{
-//         if(err) return res.status(400).json({success:false, error: err})
-//         if(!recipe.length){
-//             return res
-//                     .status(400)
-//                     .json({success: false, error:'Recipe Not Found'})
-//         }
-//         return res.status(200).json({success:true, data:recipe})
-//     }).catch(err=>console.log(err))
-// }
+getStrictRecipe = async(req, res)=>{
+  var regex = []
+  for(var v of req.body.material){
+    regex.push({'ingredients':new RegExp(v)})
+  }
+  console.log(regex)
+  
+  var query_time
+  var query_tag
+  if(typeof req.body.tag !== 'undefined') query_tag = req.body.tag
+  else query_tag=""
 
+  if(typeof req.body.minTime !== 'undefined' & typeof req.body.maxTime !== 'undefined'){
+    query_time = {
+      '$gt': parseInt(req.body.minTime), 
+      '$lt': parseInt(req.body.maxTime)
+    }
+  }else if(typeof req.body.maxTime !== 'undefined'){
+    query_time = {
+      '$lt': parseInt(req.body.maxTime)
+    }
+  }else if(typeof req.body.minTime !== 'undefined'){
+    query_time ={
+      '$gt': parseInt(req.body.minTime)
+    }
+  }else{
+    query_time="";
+  }
+  for( var c of regex) console.log(c)
+  console.log(query_time)
+  console.log(query_tag)
+  if(query_time !== ""){
+    regex.push({
+      'totaltime': query_time
+     })
+  }
+   if(query_tag !== ""){
+    regex.push({
+      'tag':query_tag
+    }) 
+   }
+  console.log(regex)
+  await Recipe.aggregate([
+      {
+        '$match': {
+           '$and':  regex
+          }
+      }, {
+        '$limit': 10
+      }, {
+          '$sort': {
+            'totaltime': 1
+            }
+      }
+      ],(err,recipe)=>{
+      if(err) return res.status(400).json({success:false, error: err})
+      if(!recipe.length){
+          return res
+                  .status(400)
+                  .json({success: false, error:'Recipe Not Found'})
+      }
+      return res.status(200).json({success:true, data:recipe})
+    }).catch(error=>console.log(error))
+}
 
 module.exports={
     getRandom,
     getLongestTimeRecipe,
-    getRecipe
+    getRecipe,
+    getStrictRecipe
 }
