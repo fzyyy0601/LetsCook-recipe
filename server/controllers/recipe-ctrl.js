@@ -1,13 +1,16 @@
 const Recipe = require('../models/recipe-model')
+
+// function to get get recipe, return mongodb search result
 getRecipe = async(req, res)=>{
-  //console.log(req.body)
   var regex = req.body.material.map(function(k){return new RegExp(k); })
-  //console.log(regex)
   var query_time
   var query_tag
+
+  // query cuisine type
   if(typeof req.body.tag !== 'undefined') query_tag = req.body.tag
   else query_tag=""
 
+  // query time 
   if(typeof req.body.minTime !== 'undefined' & typeof req.body.maxTime !== 'undefined'){
     query_time = {
       '$gt': parseInt(req.body.minTime), 
@@ -24,8 +27,9 @@ getRecipe = async(req, res)=>{
   }else{
     query_time="";
   }
-  console.log(query_time)
-  console.log(regex)
+
+  // query database, and result sort in totaltime ascending order
+  // return top 10 result
   await Recipe.aggregate([
       {
         '$match': {
@@ -58,6 +62,7 @@ getRecipe = async(req, res)=>{
     }).catch(error=>console.log(error))
 }
 
+
 getLongestTimeRecipe = async(req, res)=>{
   //await Recipe.find().sort({totaltime:1}).limit(1) get the recipe with minimum time
   await Recipe.aggregate([{$sort: {totaltime: -1}}, {$limit:1}],(err,recipe)=>{
@@ -71,6 +76,7 @@ getLongestTimeRecipe = async(req, res)=>{
   }).catch(err=>console.log(err))
 }
 
+// return random recipe
 getRandom= async(req, res)=>{
     await Recipe.aggregate([{$sample:{size :1}}],(err, recipe)=>{
       if(err) return res.status(400).json({success:false, error: err})
@@ -111,9 +117,7 @@ getStrictRecipe = async(req, res)=>{
   }else{
     query_time="";
   }
-  for( var c of regex) console.log(c)
-  console.log(query_time)
-  console.log(query_tag)
+
   if(query_time !== ""){
     regex.push({
       'totaltime': query_time
@@ -124,7 +128,7 @@ getStrictRecipe = async(req, res)=>{
       'tag':query_tag
     }) 
    }
-  console.log(regex)
+  
   await Recipe.aggregate([
       {
         '$match': {
