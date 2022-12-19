@@ -13,6 +13,7 @@
 - [Usage](#usage)
 - [The Project Status](#the-project-status)
 - [Room for improvement](#room-for-improvement)
+- [File Description](#file-description)
 - [Acknowledgements](#acknowledgements)
 
 ## General info
@@ -125,6 +126,13 @@ As for baking, you need to have a oven. So having kitchen appliance available ca
 - User Interface with color indicating choosing
 
 Currently the design is that, once the button is clicked, the color will change to orange. But once other buttons on the same page is clicked, the previously clicked button will return to the original color, which may be confusing.
+
+## File Description
+
+- client – it stores the code for react frontend
+- img — images for README.md
+- recipe_scraper – python code for scraping recipes
+- server – Node.js code for the backend
 
 ## Acknowledgements
 
